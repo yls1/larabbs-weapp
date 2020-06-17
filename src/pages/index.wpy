@@ -6,7 +6,7 @@
   			<repeat for="{{ topics }}" key="id" index="index" item="topic">
   				<navigator url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
   					<view class="weui-media-box_hd weui-media-box_hd_in-appmsg">
-  						<image class="weui-media-box_thumb" src="http://a1.att.hudong.com/05/00/01300000194285122188000535877.jpg" />
+  						<image class="weui-media-box_thumb" src="http://a1.att.hudong.com/05/00/01300000194285122188000535877.jpg" style="width:81px;height:81px;" />
    					</view>
  					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
  						<view class="weui-media-box__title">{{ topic.title }}
@@ -23,10 +23,10 @@
 <script>
   import wepy from 'wepy'
 
-  export default class Index extends wepy.page {
+  export default class Index extends wepy.page{
 
   	data = {
-  		topics:[{
+  		topics: [{
   			id: 1,
   			title: '测试1',
   			body: 'larabbs 测试内容1'

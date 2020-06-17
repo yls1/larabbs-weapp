@@ -1,0 +1,121 @@
+<style lang="less">
+.login-wrap {
+	margin-top: 50px;
+}
+</style>
+
+<template>
+	<view class="page">
+		<view class="page_bd login_wrap">
+			<view class="weui-toptips weui-toptips_warn" wx:if="{{ errorMessage }}">{{ errorMessage }}</view>
+
+			<view class="weui-cells_title">Larabbs 用户登录</view>
+			<view class="weui-cells weui-cells_after-title">
+				<view class="weui-cell weui-cell_input {{ error ? 'weui-cell_warn' : '' }}">
+					<view class="weui-cell_hd">
+						<view class="weui-label">用户名</view>
+					</view>
+					<view class="weui-cell_bd">
+						<input class="weui-input" placeholder="手机号或邮箱" @input="bindUsernameInput" />
+					</view>
+					<view wx:if="{{ error }}" class="weui-cell_ft">
+						<icon type="warn" size="23" color="#E64340"></icon>
+					</view>
+				</view>
+
+				<view class="weui-cell weui-cell_input {{ error ? 'weui-cell_warn' : '' }}">
+					<view class="weui-cell_hd">
+						<view class="weui-label">密码</view>
+					</view>
+					<view class="weui-cell_hd">
+						<input class="weui-input" placeholder="输入密码" type="password" @input="bindPasswordInput" />
+					</view>
+					<view wx:if="{{ error }}" class="weui-cell_ft">
+						<icon type="warn" size="23" color="#E64340"></icon>
+					</view>
+				</view>
+			</view>
+
+			<view class="weui-btn-area">
+				<button class="weui-btn" type="primary" @tap="submit">登录</button>
+			</view>
+		</view>
+
+	</view>
+</template>
+
+<script>
+
+	import wepy from 'wepy'
+
+	import api from '@/utils/api'
+
+	export default class Login extends wepy.page{
+		config = {
+			navigationBarTitleText: '登录'
+		}
+		data = {
+			username: '',
+			password: '',
+			error: false,
+			errorMessage: ''
+		}
+		methods = {
+			bindUsernameInput(e) {
+				this.username = e.detail.value
+			},
+			bindPasswordInput(e) {
+				this.password = e.detail.value
+			},
+			async submit() {
+				this.error = false
+				this.errorMessage = ''
+
+				if (!this.username || !this.password) {
+					this.errorMessage = "请填写账户名和密码"
+					return   
+				}
+				let params = {
+					username: this.username,
+					password: this.password
+				}
+				try {
+					let authResponse = await api.login(params)
+
+					if (authResponse.statusCode === 401) {
+                        this.error = true
+						this.errorMessage = authResponse.data.message
+						this.$apply()
+					}
+					if(authResponse.statusCode === 201) {
+						wepy.navigateBack()
+					}
+
+				}catch(err) {
+					wepy.showModal({
+						title: '提示',
+						content: '服务器错误，请联系管理员'
+					})
+				}
+
+			},
+
+			async onShow() {
+				try {
+					let authResponse = await api.login()
+					if(authResponse.statusCode === 201) {
+						wepy.navigateBack()
+					}
+				}catch(err) {
+					wepy.showModal({
+						title: '提示',
+						content: '服务器错误，请联系管理员'
+					})
+				}
+			}
+
+
+
+		}
+	}
+</script>
